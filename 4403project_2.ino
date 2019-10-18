@@ -28,7 +28,7 @@ Servo myservo;
 
 float compassRead(float heading){
   /* Get a new sensor event */ 
-  sensors_event_t event; 
+  sensors_event_t   event; 
   mag.getEvent(&event);
   
   float Pi = 3.14159;
@@ -67,9 +67,10 @@ void Uturn(){
   flag=1;
 }
 void Uturn2(){
+  flag = 0;
   digitalWrite(motorOutpin,LOW);
   digitalWrite(motorOutpin2,LOW);
-  delay(1000);
+  
   digitalWrite(motorOutpin,HIGH);
   digitalWrite(motorOutpin2,LOW);
   digitalWrite(motorOutpin3,HIGH);
@@ -80,7 +81,7 @@ void Uturn2(){
   myservo.write(140);
   delay(500);
   myservo.write(160);
-  delay(15000);
+  delay(9000);
   init_angle = init_angle+180;
   flag=1;
 }
@@ -126,9 +127,14 @@ void loop() {
   digitalWrite(motorOutpin,HIGH);
   digitalWrite(motorOutpin2,HIGH);
   digitalWrite(motorOutpin3,LOW);
-  delay(100);
-  if(sensorValue<=200&&sensorValue>=150)
+  delay(50);
+  if(sensorValue<=250&&sensorValue>=150)
   {
+    while(flag==1){
+      digitalWrite(motorOutpin,LOW);
+      digitalWrite(motorOutpin2,LOW);
+      digitalWrite(motorOutpin3,LOW);
+    }
     Uturn2();   
   }
     
