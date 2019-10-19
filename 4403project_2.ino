@@ -54,36 +54,36 @@ void Uturn(){
   digitalWrite(motorOutpin,LOW);
   delay(1000);
   digitalWrite(motorOutpin,HIGH);
-  myservo.write(80);
+  myservo.write(90);
   delay(500);
   myservo.write(120);
   delay(500);
   myservo.write(140);
   delay(500);
-  myservo.write(160);
+  myservo.write(160); 
   
   delay(15000);
   init_angle = init_angle+180;
-  flag=1;
+  flag=true;
 }
 void Uturn2(){
-  flag = 0;
-  digitalWrite(motorOutpin,LOW);
-  digitalWrite(motorOutpin2,LOW);
+  flag = false;
+  //digitalWrite(motorOutpin,LOW);
+  //digitalWrite(motorOutpin2,LOW);
   
-  digitalWrite(motorOutpin,HIGH);
-  digitalWrite(motorOutpin2,LOW);
-  digitalWrite(motorOutpin3,HIGH);
-  myservo.write(80);
-  delay(500);
+  //digitalWrite(motorOutpin,HIGH);
+  //digitalWrite(motorOutpin2,LOW);
+  //digitalWrite(motorOutpin3,HIGH);
+  myservo.write(90);
+  delay(200);
   myservo.write(120);
-  delay(500);
+  delay(200);
   myservo.write(140);
-  delay(500);
+  delay(200);
   myservo.write(160);
-  delay(9000);
+  delay(3000);
   init_angle = init_angle+180;
-  flag=1;
+  flag=true;
 }
 
 void setup() {
@@ -109,7 +109,7 @@ void setup() {
 void loop() {
   sensorValue = analogRead(analogInPin);
   // map it to the range of the analog out:
-  outputValue = sensorValue/4;
+  outputValue = sensorValue/20;
   // change the analog out value:
   angle = compassRead(angle);
 
@@ -122,15 +122,15 @@ void loop() {
   
   Serial.print("Compass Heading: ");
   Serial.println(angle);
-  delay(100);
+  //delay(100);
   
   digitalWrite(motorOutpin,HIGH);
   digitalWrite(motorOutpin2,HIGH);
   digitalWrite(motorOutpin3,LOW);
-  delay(50);
-  if(sensorValue<=250&&sensorValue>=150)
+  delay(100);
+  if(outputValue<15&&outputValue>13)
   {
-    while(flag==1){
+    while(flag){
       digitalWrite(motorOutpin,LOW);
       digitalWrite(motorOutpin2,LOW);
       digitalWrite(motorOutpin3,LOW);
@@ -141,23 +141,24 @@ void loop() {
     turnAngle = int(init_angle)-int(angle);
     if(turnAngle>180){
       turnAngle = int(angle)-int(init_angle)+360;
-      servoValue = 90-turnAngle;
+      servoValue = 90+turnAngle;
     }
-    if(turnAngle<=-180){
+    else if(turnAngle<=-180){
        turnAngle+=360;
-       servoValue = 90+turnAngle;
+       servoValue = 90-turnAngle;
     }
-    else{
-      servoValue = turnAngle+90;
+    else if(turnAngle>-180&&turnAngle<180)
+    {
+      servoValue = 90-turnAngle;
     }
     Serial.println(init_angle);
     Serial.println(servoValue);
     if(servoValue>=180){
       
-      servoValue = 180;
+      servoValue = 160;
     }
     if(servoValue<=0){
-      servoValue = 0;
+      servoValue = 20;
     }
     myservo.write(servoValue);
     Serial.println(servoValue);
