@@ -57,13 +57,6 @@ void set_init(){
 
 void Uturn2(){
   flag = false;
-  //digitalWrite(motorOutpin,LOW);
-  //digitalWrite(motorOutpin2,LOW);
-  
-  //digitalWrite(motorOutpin,HIGH);
-  //digitalWrite(motorOutpin2,LOW);
-  //digitalWrite(motorOutpin3,HIGH);
-  
   
   myservo.write(120);
   delay(100);
@@ -159,9 +152,6 @@ void loop() {
     }
     if(!flag){
     Uturn2();
-    //digitalWrite(Trig, LOW);
-    //delay(200);
-    //digitalWrite(Trig,HIGH);
     }      
   }
     
@@ -191,8 +181,7 @@ void loop() {
     Serial.println(servoValue);
     delay(1);
     
-    //myservo.write(180);
-    //delay(1000);
+
   
   
 
