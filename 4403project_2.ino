@@ -7,17 +7,21 @@
 
 /* Assign a unique ID to this sensor at the same time */
 Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(12345);
-
+#define Trig 2 //D2
+#define Echo 3 //D3
 const int analogInPin = 14;  // sensor input pin 
 const int servoOutpin = 9;   // servo output pin 
 int sensorValue = 0;        // sensor value read from the pot
 int outputValue = 0;        // value output to the PWM (analog out)
 //int servoBefore = 0;         // value output to the PWM (analog out)
 //int servoAfter = 0;
+float cm;
+float temp;
 int servoValue = 0;
 int motorOutpin = 7;         // morotr pin
 int motorOutpin2 = 6;        
 int motorOutpin3 = 5;
+int motorOutpin4 = 4;       //
 float init_angle = 0;       // initial angle       
 float angle = 0 ;          // angle
 float turnAngle = 0;    //
@@ -50,22 +54,7 @@ void set_init(){
   delay(500);
   
 }
-void Uturn(){
-  digitalWrite(motorOutpin,LOW);
-  delay(1000);
-  digitalWrite(motorOutpin,HIGH);
-  myservo.write(90);
-  delay(500);
-  myservo.write(120);
-  delay(500);
-  myservo.write(140);
-  delay(500);
-  myservo.write(160); 
-  
-  delay(15000);
-  init_angle = init_angle+180;
-  flag=true;
-}
+
 void Uturn2(){
   flag = false;
   //digitalWrite(motorOutpin,LOW);
@@ -74,27 +63,55 @@ void Uturn2(){
   //digitalWrite(motorOutpin,HIGH);
   //digitalWrite(motorOutpin2,LOW);
   //digitalWrite(motorOutpin3,HIGH);
-  myservo.write(90);
-  delay(200);
+  
+  
   myservo.write(120);
-  delay(200);
+  delay(100);
   myservo.write(140);
-  delay(200);
+  delay(100);
   myservo.write(160);
-  delay(3000);
+  delay(3600);
   init_angle = init_angle+180;
   flag=true;
+}
+void distance(){
+  digitalWrite(Trig, LOW); 
+  delayMicroseconds(2);    
+  digitalWrite(Trig,HIGH); 
+  delayMicroseconds(10);    
+  digitalWrite(Trig, LOW); 
+  
+  temp = float(pulseIn(Echo, HIGH)); 
+  //calculte the time between HIGH to LOW
+  
+  
+  //34000cm / 1000000μs => 34 / 1000
+  //
+  //distance(cm)  =  (temp * (34 / 1000)) / 2
+  // (temp * 17)/ 1000
+  
+  cm = (temp * 17 )/1000; //transfer to cm
+ 
+  Serial.print("Echo =");
+  Serial.print(temp);
+  Serial.print(" | | Distance = ");
+  Serial.print(cm);
+  Serial.println("cm");
+  //delay(100);
+
 }
 
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
   Serial.println();
-
+  pinMode(Trig,OUTPUT); //D2
+  pinMode(Echo,INPUT);  //D3
   pinMode(motorOutpin,OUTPUT);
   pinMode(servoOutpin, OUTPUT);
   pinMode(motorOutpin2,OUTPUT);
   pinMode(motorOutpin3,OUTPUT);
+  pinMode(motorOutpin4,OUTPUT);
   myservo.attach(servoOutpin);
   if(!mag.begin())
   {
@@ -107,18 +124,11 @@ void setup() {
 
 
 void loop() {
-  sensorValue = analogRead(analogInPin);
-  // map it to the range of the analog out:
-  outputValue = sensorValue/20;
-  // change the analog out value:
-  angle = compassRead(angle);
 
+  angle = compassRead(angle);
+  distance();//read distance
   // print the results to the Serial Monitor:
   
-  Serial.print("sensor = ");
-  Serial.print(sensorValue);
-  Serial.print("\t output = ");
-  Serial.println(outputValue);
   
   Serial.print("Compass Heading: ");
   Serial.println(angle);
@@ -127,15 +137,32 @@ void loop() {
   digitalWrite(motorOutpin,HIGH);
   digitalWrite(motorOutpin2,HIGH);
   digitalWrite(motorOutpin3,LOW);
-  delay(100);
-  if(outputValue<15&&outputValue>13)
+  digitalWrite(motorOutpin4,LOW);
+  delay(50);
+  if(cm<45)
   {
-    while(flag){
+    distance();
+    while(cm<=45&&flag&&servoValue<=130&&servoValue>=60){
+      digitalWrite(motorOutpin,LOW);      //reverse
+      digitalWrite(motorOutpin2,LOW);
+      digitalWrite(motorOutpin3,HIGH);
+      digitalWrite(motorOutpin4,HIGH);
+      delay(2000);
+      while(1){
       digitalWrite(motorOutpin,LOW);
       digitalWrite(motorOutpin2,LOW);
       digitalWrite(motorOutpin3,LOW);
+      digitalWrite(motorOutpin4,LOW);
+      
+      }
+      
     }
-    Uturn2();   
+    if(!flag){
+    Uturn2();
+    //digitalWrite(Trig, LOW);
+    //delay(200);
+    //digitalWrite(Trig,HIGH);
+    }      
   }
     
     turnAngle = int(init_angle)-int(angle);
