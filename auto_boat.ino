@@ -13,8 +13,6 @@ const int analogInPin = 14;  // sensor input pin
 const int servoOutpin = 9;   // servo output pin 
 int sensorValue = 0;        // sensor value read from the pot
 int outputValue = 0;        // value output to the PWM (analog out)
-//int servoBefore = 0;         // value output to the PWM (analog out)
-//int servoAfter = 0;
 float cm;
 float temp;
 int servoValue = 0;
@@ -136,7 +134,7 @@ void loop() {
   {
     distance();
     while(cm<=45&&flag&&servoValue<=130&&servoValue>=60){
-      digitalWrite(motorOutpin,LOW);      //reverse
+      digitalWrite(motorOutpin,LOW);             //reverse engine
       digitalWrite(motorOutpin2,LOW);
       digitalWrite(motorOutpin3,HIGH);
       digitalWrite(motorOutpin4,HIGH);
