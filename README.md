@@ -1,4 +1,4 @@
-## Funtion
+## Function
 The autonomous boat contains 4 main functions:
 * Drive straight stably in the specified direction
 * Turn 180° when almost reaches the obstacle
